@@ -1,4 +1,6 @@
 # namedsql
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/ferdypruis/namedsql)](https://pkg.go.dev/github.com/ferdypruis/namedsql)
+
 Use named parameters with Go's database/sql
 
 ## Examples
