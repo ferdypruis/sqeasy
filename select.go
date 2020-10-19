@@ -5,16 +5,22 @@ import "strings"
 // SelectColumns is a mapping of expression, like a column, to a destination variable
 type SelectColumns map[string]interface{}
 
+// exprs returns the slice of expressions
+func (sc SelectColumns) exprs() []string {
+	exprs := make([]string, len(sc))
+	var i int
+	for expr := range sc {
+		exprs[i] = expr
+		i++
+	}
+
+	return exprs
+}
+
 // ExprList returns all the expressions separated by comma
 // Use this in your SELECT statement
 func (sc SelectColumns) ExprList() string {
-	exprlist := make([]string, len(sc))
-	var i int
-	for expr := range sc {
-		exprlist[i] = expr
-		i++
-	}
-	return strings.Join(exprlist, `,`)
+	return strings.Join(sc.exprs(), `,`)
 }
 
 // Scan copies the columns from the row into the values
