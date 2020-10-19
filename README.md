@@ -16,7 +16,7 @@ var db *sql.DB
 
 var (
     colA      string
-    timestamp sql.NullString
+    timestamp time.Time
     count     int
 )
 
