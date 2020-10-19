@@ -21,9 +21,9 @@ var (
 )
 
 columns := sqeasy.SelectColumns{
-    `a_column`:    &colA,
-    `"timestamp"`: &timestamp,
-    `COUNT(*)`:    &count,
+    {`a_column`,    &colA},
+    {`"timestamp"`, &timestamp},
+    {`COUNT(*)`,    &count},
 }
 
 row := db.QueryRow("SELECT " + columns.ExprList() + " FROM table")

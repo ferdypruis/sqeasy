@@ -3,15 +3,16 @@ package sqeasy
 import "strings"
 
 // SelectColumns is a mapping of expression, like a column, to a destination variable
-type SelectColumns map[string]interface{}
+type SelectColumns []struct {
+	Expr string
+	Dest interface{}
+}
 
 // exprs returns the slice of expressions
 func (sc SelectColumns) exprs() []string {
 	exprs := make([]string, len(sc))
-	var i int
-	for expr := range sc {
-		exprs[i] = expr
-		i++
+	for i, s := range sc {
+		exprs[i] = s.Expr
 	}
 
 	return exprs
@@ -28,10 +29,8 @@ func (sc SelectColumns) Scan(row interface {
 	Scan(dest ...interface{}) error
 }) error {
 	dests := make([]interface{}, len(sc))
-	var i int
-	for _, dest := range sc {
-		dests[i] = dest
-		i++
+	for i, s := range sc {
+		dests[i] = s.Dest
 	}
 	return row.Scan(dests...)
 }
