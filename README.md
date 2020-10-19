@@ -43,7 +43,7 @@ columns := sqeasy.SelectColumns{
 query := `SELECT ` + columns.ExprList() + ` FROM table WHERE a_column != :colA AND timestamp < :timestamp`
 
 // Use named parameters
-params := NamedParams{
+params := sqeasy.NamedParams{
     "colA":      "notthis",
     "timestamp": time.Now(),
 }
