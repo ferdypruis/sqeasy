@@ -8,44 +8,38 @@ count and match columns and variables.
 * Map columns to destination values
 * Use named parameters
 
-## Example
-Instead of;
+## Examples
+### Map columns to destination values
 ```go
+var db *sql.DB
+
+
 var (
-   colA      string
-   timestamp time.Time
-   count     int
+    colA      string
+    timestamp sql.NullString
+    count     int
 )
 
-query := `SELECT a_column, "timestamp", COUNT(*) FROM table WHERE a_column != $1 AND timestamp < $2`
-err := db.QueryRow(query, "notthis", time.Now()).Scan(
-	&colA,
-	&timestamp,
-	&count,
-)
-```
-
-You can do it sqeasy with;
-```go
-var (
-   colA      string
-   timestamp time.Time
-   count     int
-)
-
-// Map columns to destination values
 columns := sqeasy.SelectColumns{
-    {`a_column`,    &colA},
-    {`"timestamp"`, &timestamp},
-    {`COUNT(*)`,    &count},
+    `a_column`:    &colA,
+    `"timestamp"`: &timestamp,
+    `COUNT(*)`:    &count,
 }
 
-query := `SELECT ` + columns.ExprList() + ` FROM table WHERE a_column != :colA AND timestamp < :timestamp`
+row := db.QueryRow("SELECT " + columns.ExprList() + " FROM table")
+err := columns.Scan(row)
+```
 
-// Use named parameters
+### Use named parameters
+```go
+var db *sql.DB
+
+
 params := sqeasy.NamedParams{
     "colA":      "notthis",
     "timestamp": time.Now(),
 }
-err := columns.Scan(sqeasy.QueryRow(db, query, params))
+
+query := "SELECT * FROM table WHERE a_column != :colA AND timestamp < :timestamp"
+row := sqeasy.QueryRow(db, query, params)
 ```
