@@ -5,7 +5,11 @@ import (
 	"database/sql"
 )
 
-func QueryContext(ctx context.Context, db *sql.DB, query string, params NamedParams) (*sql.Rows, error) {
+type dbQueryContext interface {
+	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
+}
+
+func QueryContext(ctx context.Context, db dbQueryContext, query string, params NamedParams) (*sql.Rows, error) {
 	query, args, err := params.Parse(query)
 	if err != nil {
 		return nil, err
@@ -13,11 +17,15 @@ func QueryContext(ctx context.Context, db *sql.DB, query string, params NamedPar
 	return db.QueryContext(ctx, query, args...)
 }
 
-func Query(db *sql.DB, query string, params NamedParams) (*sql.Rows, error) {
+func Query(db dbQueryContext, query string, params NamedParams) (*sql.Rows, error) {
 	return QueryContext(context.Background(), db, query, params)
 }
 
-func QueryRowContext(ctx context.Context, db *sql.DB, query string, params NamedParams) *Row {
+type dbQueryRowContext interface {
+	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
+}
+
+func QueryRowContext(ctx context.Context, db dbQueryRowContext, query string, params NamedParams) *Row {
 	query, args, err := params.Parse(query)
 	if err != nil {
 		return &Row{
@@ -29,11 +37,15 @@ func QueryRowContext(ctx context.Context, db *sql.DB, query string, params Named
 	}
 }
 
-func QueryRow(db *sql.DB, query string, params NamedParams) *Row {
+func QueryRow(db dbQueryRowContext, query string, params NamedParams) *Row {
 	return QueryRowContext(context.Background(), db, query, params)
 }
 
-func ExecContext(ctx context.Context, db *sql.DB, query string, params NamedParams) (sql.Result, error) {
+type dbExecContext interface {
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+}
+
+func ExecContext(ctx context.Context, db dbExecContext, query string, params NamedParams) (sql.Result, error) {
 	query, args, err := params.Parse(query)
 	if err != nil {
 		return nil, err
@@ -41,11 +53,15 @@ func ExecContext(ctx context.Context, db *sql.DB, query string, params NamedPara
 	return db.ExecContext(ctx, query, args...)
 }
 
-func Exec(db *sql.DB, query string, params NamedParams) (sql.Result, error) {
+func Exec(db dbExecContext, query string, params NamedParams) (sql.Result, error) {
 	return ExecContext(context.Background(), db, query, params)
 }
 
-func PrepareContext(ctx context.Context, db *sql.DB, query string) (*Stmt, error) {
+type dbPrepareContext interface {
+	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+}
+
+func PrepareContext(ctx context.Context, db dbPrepareContext, query string) (*Stmt, error) {
 	query, params := parseNamedQuery(query)
 	stmt, err := db.PrepareContext(ctx, query)
 	return &Stmt{
@@ -54,7 +70,7 @@ func PrepareContext(ctx context.Context, db *sql.DB, query string) (*Stmt, error
 	}, err
 }
 
-func Prepare(db *sql.DB, query string) (*Stmt, error) {
+func Prepare(db dbPrepareContext, query string) (*Stmt, error) {
 	return PrepareContext(context.Background(), db, query)
 }
 
