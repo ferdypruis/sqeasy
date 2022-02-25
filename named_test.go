@@ -2,8 +2,9 @@ package sqeasy_test
 
 import (
 	"database/sql"
-	"github.com/ferdypruis/sqeasy"
 	"time"
+
+	"github.com/ferdypruis/sqeasy"
 )
 
 func ExampleNamedParams() {
@@ -15,5 +16,5 @@ func ExampleNamedParams() {
 	}
 
 	query := "SELECT * FROM table WHERE a_column != :colA AND timestamp < :timestamp"
-	row := sqeasy.QueryRow(db, query, params)
+	_ = sqeasy.QueryRow(db, query, params)
 }

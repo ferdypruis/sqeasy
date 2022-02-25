@@ -2,6 +2,7 @@ package sqeasy_test
 
 import (
 	"database/sql"
+
 	"github.com/ferdypruis/sqeasy"
 )
 
@@ -21,5 +22,5 @@ func ExampleSelectColumns() {
 	}
 
 	row := db.QueryRow("SELECT " + columns.ExprList() + " FROM table")
-	err := columns.Scan(row)
+	_ = columns.Scan(row)
 }

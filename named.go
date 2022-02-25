@@ -15,7 +15,7 @@ func (np NamedParams) Parse(query string) (string, []interface{}, error) {
 	return query, args, err
 }
 
-// Args returns the value for each parameter on the position as indicated in the param slice
+// args returns the value for each parameter on the position as indicated in the param slice
 func (np NamedParams) Args(params []string) ([]interface{}, error) {
 	args := make([]interface{}, len(params))
 
